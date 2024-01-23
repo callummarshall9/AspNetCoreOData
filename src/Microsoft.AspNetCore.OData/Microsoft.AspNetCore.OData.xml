@@ -1177,19 +1177,6 @@
         <member name="M:Microsoft.AspNetCore.OData.Common.TypeHelper.GetImplementedIEnumerableType(System.Type)">
             <summary>
             Returns type of T if the type implements IEnumerable of T, otherwise, return null.
-            e otherwise.</returns>
-        </member>
-        <member name="M:Microsoft.AspNetCore.OData.Common.TypeHelper.IsCollection(System.Type,System.Type@)">
-            <summary>
-            Determine if a type is a collection.
-            </summary>
-            <param name="clrType">The type to test.</param>
-            <param name="elementType">out: the element type of the collection.</param>
-            <returns>True if the type is an enumeration; false otherwise.</returns>
-        </member>
-        <member name="M:Microsoft.AspNetCore.OData.Common.TypeHelper.GetImplementedIEnumerableType(System.Type)">
-            <summary>
-            Returns type of T if the type implements IEnumerable of T, otherwise, return null.
             </summary>
             <param name="type"></param>
             <returns></returns>
@@ -1488,6 +1475,18 @@
             <param name="dynamicDictionaryPropertyInfo">The property info that is used as dictionary of dynamic
             properties. <c>null</c> means this entity type is not open.</param>
         </member>
+        <member name="M:Microsoft.AspNetCore.OData.Deltas.DeltaDeletedResource`1.#ctor(System.Type,System.Collections.Generic.IEnumerable{System.String},System.Reflection.PropertyInfo,System.Boolean)">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.AspNetCore.OData.Deltas.DeltaDeletedResource`1"/>.
+            </summary>
+            <param name="structuralType">The derived entity type which the changes would be tracked.
+            <paramref name="structuralType"/> should be assignable to instances of <typeparamref name="T"/>.</param>
+            <param name="updatableProperties">The set of properties that can be updated or reset. Unknown property
+            names, including those of dynamic properties, are ignored.</param>
+            <param name="dynamicDictionaryPropertyInfo">The property info that is used as dictionary of dynamic
+            <param name="isComplexType">If structuralType is a complex type.</param>
+            properties. <c>null</c> means this entity type is not open.</param>
+        </member>
         <member name="P:Microsoft.AspNetCore.OData.Deltas.DeltaDeletedResource`1.Id">
             <inheritdoc />
         </member>
@@ -1649,8 +1648,41 @@
             <param name="updatableProperties">The set of properties that can be updated or reset. Unknown property
             names, including those of dynamic properties, are ignored.</param>
             <param name="dynamicDictionaryPropertyInfo">The property info that is used as dictionary of dynamic
-            properties. <c>null</c> means nger
+            properties. <c>null</c> means this entity type is not open.</param>
+        </member>
+        <member name="M:Microsoft.AspNetCore.OData.Deltas.Delta`1.#ctor(System.Type,System.Collections.Generic.IEnumerable{System.String},System.Reflection.PropertyInfo,System.Boolean)">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.AspNetCore.OData.Deltas.Delta`1"/>.
+            </summary>
+            <param name="structuralType">The derived entity type or complex type for which the changes would be tracked.
+            <paramref name="structuralType"/> should be assignable to instances of <typeparamref name="T"/>.
+            </param>
+            <param name="updatableProperties">The set of properties that can be updated or reset. Unknown property
+            names, including those of dynamic properties, are ignored.</param>
+            <param name="dynamicDictionaryPropertyInfo">The property info that is used as dictionary of dynamic
+            properties. <c>null</c> means this entity type is not open.</param>
+            <param name="isComplexType">If structuralType is a complex type.</param>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.Deltas.Delta`1.Kind">
+            <inheritdoc />
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.Deltas.Delta`1.StructuredType">
+            <inheritdoc/>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.Deltas.Delta`1.ExpectedClrType">
+            <inheritdoc/>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.Deltas.Delta`1.UpdatableProperties">
+            <summary>
+            The list of property names that can be updated.
+            </summary>
+            <remarks>When the list is modified, any modified properties that were removed from the list are no longer
             considered to be changed.</remarks>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.Deltas.Delta`1.IsComplexType">
+            <summary>
+            If the StructuralType is a Complex type.
+            </summary>
         </member>
         <member name="M:Microsoft.AspNetCore.OData.Deltas.Delta`1.Clear">
             <inheritdoc/>
@@ -1718,23 +1750,11 @@
         </member>
         <member name="M:Microsoft.AspNetCore.OData.Deltas.Delta`1.Patch(`0)">
             <summary>
-            Overwrites the <paramref name="origina="original"/> entity recursively.
-            </summary>
-            <param name="original">The entity to be updated.</param>
-        </member>
-        <member name="M:Microsoft.AspNetCore.OData.Deltas.Delta`1.CopyUnchangedValues(`0)">
-            <summary>
-            Copies the unchanged property values from the underlying entity (accessible via <see cref="M:Microsoft.AspNetCore.OData.Deltas.Delta`1.GetInstance" />)
-            to the <paramref name="original"/> entity.
-            </summary>
-            <param name="original">The entity to be updated.</param>
-        </member>
-        <member name="M:Microsoft.AspNetCore.OData.Deltas.Delta`1.Patch(`0)">
-            <summary>
             Overwrites the <paramref name="original"/> entity with the changes tracked by this Delta.
             <remarks>The semantics of this operation are equivalent to a HTTP PATCH operation, hence the name.</remarks>
             </summary>
             <param name="original">The entity to be updated.</param>
+            <returns>The updated entity.</returns>
         </member>
         <member name="M:Microsoft.AspNetCore.OData.Deltas.Delta`1.Put(`0)">
             <summary>
@@ -6036,6 +6056,19 @@
         <member name="M:Microsoft.AspNetCore.OData.Formatter.Value.TypedEdmStructuredObject.TryGetPropertyValue(System.String,System.Object@)">
             <inheritdoc/>
         </member>
+        <member name="T:Microsoft.AspNetCore.OData.Formatter.Value.PropertyGetterCacheEqualityComparer">
+            <summary>
+            A custom equality comparer for the property getter cache. 
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.OData.Formatter.Value.PropertyGetterCacheEqualityComparer.GetHashCode(System.ValueTuple{System.String,System.Type})">
+            <summary>
+            This method overrides the default GetHashCode() implementation
+            for a tuple of (string, Type) to provide a more effective hash code.
+            </summary>
+            <param name="obj">The tuple object to calculate a hash code for</param>
+            <returns>The calculated hash code. </returns>
+        </member>
         <member name="T:Microsoft.AspNetCore.OData.Formatter.Value.TypedEdmUntypedObject">
             <summary>
             Represents an <see cref="T:Microsoft.AspNetCore.OData.Formatter.Value.IEdmUntypedObject"/> backed by a CLR object without Edm type.
@@ -6639,1090 +6672,272 @@
             <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/> to add the services to.</param>
             <returns>The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/> so that additional calls can be chained.</returns>
         </member>
-        <member name="T:Microsoft.AspNetCore.OData.ODataUriFunctions">
+        <member name="T:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions">
             <summary>
-            OData UriFunctions helper.
+            This partial class defines the configuration on <see cref="T:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions"/>.
             </summary>
-        </member>
-        <member name="M:Microsoft.AspNetCore.OData.ODataUriFunctions.AddCustomUriFunction(System.String,Microsoft.OData.UriParser.FunctionSignatureWithReturnType,System.Reflection.MethodInfo)">
-            <summary>
-            This is a shortcut of adding the custom FunctionSignature through 'CustomUriFunctions' class and
-            binding the function name to it's MethodInfo through 'UriFunctionsBinder' class.
-            See these classes documentations.
-            In case of an exception, both operations(adding the signature and binding the function) will be undone.
-            </summary>
-            <param name="functionName">The uri function name that appears in the OData request uri.</param>
-            <param name="functionSignature">The new custom function signature.</param>
-            <param name="methodInfo">The MethodInfo to bind the given function name.</param>
-            <exception cref="T:System.Exception">Any exception thrown by 'CustomUriFunctions.AddCustomUriFunction' and 'UriFunctionBinder.BindUriFunctionName' methods.</exception>
-        </member>
-        <member name="M:Microsoft.AspNetCore.OData.ODataUriFunctions.RemoveCustomUriFunction(System.String,Microsoft.OData.UriParser.FunctionSignatureWithReturnType,System.Reflection.MethodInfo)">
-            <summary>
-            This is a shortcut of removing the FunctionSignature through 'CustomUriFunctions' class and
-            unbinding the function name from it's MethodInfo through 'UriFunctionsBinder' class.
-            See these classes documentations.
-            </summary>
-            <param name="functionName">The uri function name that appears in the OData request uri.</param>
-            <param name="functionSignature">The new custom function signature.</param>
-            <param name="methodInfo">The MethodInfo to bind the given function name.</param>
-            <exception cref="T:System.Exception">Any exception thrown by 'CustomUriFunctions.RemoveCustomUriFunction' and 'UriFunctionsBinder.UnbindUriFunctionName' methods.</exception>
-            <returns>'True' if the function signature has successfully removed and unbounded. 'False' otherwise.</returns>
-        </member>
-        <member name="T:Microsoft.AspNetCore.OData.SRResources">
-            <summary>
-              A strongly-typed resource class, for looking up localized strings, etc.
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ResourceManager">
-            <summary>
-              Returns the cached ResourceManager instance used by this class.
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.Culture">
-            <summary>
-              Overrides the current thread's CurrentUICulture property for all
-              resource lookups using this strongly typed resource class.
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ActionContextMustHaveDescriptor">
-            <summary>
-              Looks up a localized string similar to The HttpActionContext.ActionDescriptor is null..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ActionDescriptorNotControllerActionDescriptor">
-            <summary>
-              Looks up a localized string similar to ActionDescriptor is not ControllerActionDescriptor..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ActionExecutedContextMustHaveRequest">
-            <summary>
-              Looks up a localized string similar to The HttpExecutedActionContext.Request is null..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ActionNotBoundToCollectionOfEntity">
-            <summary>
-              Looks up a localized string similar to The action &apos;{0}&apos; is not bound to the collection of entity. Only actions that are bound to entities can have action links..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ActionNotBoundToEntity">
-            <summary>
-              Looks up a localized string similar to The action &apos;{0}&apos; is not bound to an entity. Only actions that are bound to entities can have action links..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.AggregateKindNotSupported">
-            <summary>
-              Looks up a localized string similar to {0} type of aggregation is not supported..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.AggregationMethodNotSupported">
-            <summary>
-              Looks up a localized string similar to Aggregation method &apos;{0}&apos; is not supported..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.AggregationNotSupportedForType">
-            <summary>
-              Looks up a localized string similar to Aggregation &apos;{0}&apos; not supported for property &apos;{1}&apos; of type &apos;{2}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.AmbiguousNavigationSourceNameFound">
-            <summary>
-              Looks up a localized string similar to Ambiguous navigation source (entity set or singleton) name &apos;{0}&apos; found. Please use correct navigation source name case..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.AmbiguousPropertyNameFound">
-            <summary>
-              Looks up a localized string similar to Ambiguous property name &apos;{0}&apos; found. Please use correct property name case..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.AmbiguousTypeNameFound">
-            <summary>
-              Looks up a localized string similar to Ambiguous type name &apos;{0}&apos; found. Please use correct type name case..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ApplyQueryOptionNotSupportedForLinq2SQL">
-            <summary>
-              Looks up a localized string similar to $apply query options not supported for LINQ to SQL providers..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ApplyToOnUntypedQueryOption">
-            <summary>
-              Looks up a localized string similar to The query option is not bound to any CLR type. &apos;{0}&apos; is only supported with a query option bound to a CLR type..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ArgumentMustBeGreaterThanOrEqualTo">
-            <summary>
-              Looks up a localized string similar to Value must be greater than or equal to {0}..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ArgumentMustBeLessThanOrEqualTo">
-            <summary>
-              Looks up a localized string similar to Value must be less than or equal to {0}..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ArgumentMustBeOfType">
-            <summary>
-              Looks up a localized string similar to The argument must be of type &apos;{0}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ArgumentNullOrEmpty">
-            <summary>
-              Looks up a localized string similar to The argument &apos;{0}&apos; is null or empty..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.BatchRequestInvalidMediaType">
-            <summary>
-              Looks up a localized string similar to The batch request must have &apos;{0}&apos; or &apos;{1}&apos; as the media type..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.BatchRequestMissingBody">
-            <summary>
-              Looks up a localized string similar to The &apos;Body&apos; property on the batch request cannot be null..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.BatchRequestMissingBoundary">
-            <summary>
-              Looks up a localized string similar to The batch request must have a boundary specification in the &quot;Content-Type&quot; header..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.BatchRequestMissingContentType">
-            <summary>
-              Looks up a localized string similar to The batch request must have a &quot;Content-Type&quot; header..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.BinaryOperatorNotSupported">
-            <summary>
-              Looks up a localized string similar to A binary operator with incompatible types was detected. Found operand types &apos;{0}&apos; and &apos;{1}&apos; for operator kind &apos;{2}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.CannotAddToNullCollection">
-            <summary>
-              Looks up a localized string similar to The property &apos;{0}&apos; on type &apos;{1}&apos; returned a null value. The input stream contains collection items which cannot be added if the instance is null..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.CannotApplyETagOfT">
-            <summary>
-              Looks up a localized string similar to Cannot apply {0} of &apos;{1}&apos; to {2} of &apos;{3}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.CannotApplyODataQueryOptionsOfT">
-            <summary>
-              Looks up a localized string similar to Cannot apply {0} of &apos;{1}&apos; to {2} of &apos;{3}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.CannotCastFilter">
-            <summary>
-              Looks up a localized string similar to Cannot cast $filter of type &apos;{0}&apos; to type &apos;{1}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.CannotDeserializeUnknownProperty">
-            <summary>
-              Looks up a localized string similar to The property &apos;{0}&apos; does not exist on type &apos;{1}&apos;. Make sure to only use property names that are defined by the type..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.CannotFindKeyInEntityType">
-            <summary>
-              Looks up a localized string similar to Cannot find key &apos;{0}&apos; in the &apos;{1}&apos; type..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.CannotFindParameterInOperation">
-            <summary>
-              Looks up a localized string similar to Cannot find parameter &apos;{0}&apos; is in the operation &apos;{1}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.CannotGetEnumClrMember">
-            <summary>
-              Looks up a localized string similar to Cannot Get the Enum Clr member using &apos;{0}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.CannotInstantiateAbstractResourceType">
-            <summary>
-              Looks up a localized string similar to An instance of the abstract resource type &apos;{0}&apos; was found. Abstract resource types cannot be instantiated..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.CannotParseQueryRequestPayload">
-            <summary>
-              Looks up a localized string similar to Unable to parse query request payload..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.CannotPatchNavigationProperties">
-            <summary>
-              Looks up a localized string similar to Cannot apply PATCH to navigation property &apos;{0}&apos; on entity type &apos;{1}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.CannotProcessPrefixTemplate">
-            <summary>
-              Looks up a localized string similar to Cannot process the prefix &apos;{0}&apos; template..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.CannotSerializerNull">
-            <summary>
-              Looks up a localized string similar to Cannot serialize a null &apos;{0}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.CannotSetDynamicPropertyDictionary">
-            <summary>
-              Looks up a localized string similar to The dynamic dictionary property &apos;{0}&apos; of type &apos;{1}&apos; cannot be set. The dynamic property dictionary must have a setter..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.CannotWriteType">
-            <summary>
-              Looks up a localized string similar to {0} cannot write an object of type &apos;{1}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ClrTypeNotInModel">
-            <summary>
-              Looks up a localized string similar to The given model does not contain the type &apos;{0}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.CollectionParameterShouldHaveAddMethod">
-            <summary>
-              Looks up a localized string similar to The type &apos;{0}&apos; of the parameter &apos;{1}&apos; does not have an Add method. Consider using a collection type that does have an Add method - for example IList&lt;T&gt; or ICollection&lt;T&gt;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.CollectionShouldHaveAddMethod">
-            <summary>
-              Looks up a localized string similar to The type &apos;{0}&apos; of the property &apos;{1}&apos; on type &apos;{2}&apos; does not have an Add method. Consider using a collection type that does have an Add method - for example IList&lt;T&gt; or ICollection&lt;T&gt;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.CollectionShouldHaveClearMethod">
-            <summary>
-              Looks up a localized string similar to The type &apos;{0}&apos; of the property &apos;{1}&apos; on type &apos;{2}&apos; does not have a Clear method. Consider using a collection type that does have a Clear method, such as IList&lt;T&gt; or ICollection&lt;T&gt;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ConvertToEnumFailed">
-            <summary>
-              Looks up a localized string similar to Cannot compare an enum of type &apos;{0}&apos; to an expression of type &apos;{1}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.CreateODataValueNotSupported">
-            <summary>
-              Looks up a localized string similar to {0} does not support CreateODataValue..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.CustomQueryOptionNotSupportedWithDollarSign">
-            <summary>
-              Looks up a localized string similar to Custom query option &apos;{0}&apos; that starts with &apos;$&apos; is not supported..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.DeltaEntityTypeNotAssignable">
-            <summary>
-              Looks up a localized string similar to The actual entity type &apos;{0}&apos; is not assignable to the expected type &apos;{1}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.DeltaNestedResourceNameNotFound">
-            <summary>
-              Looks up a localized string similar to Cannot find nested resource name &apos;{0}&apos; in parent resource type &apos;{1}&apos;.
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.DeltaTypeMismatch">
-            <summary>
-              Looks up a localized string similar to Cannot use Delta of type &apos;{0}&apos; on an entity of type &apos;{1}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.DeserializerDoesNotSupportRead">
-            <summary>
-              Looks up a localized string similar to &apos;{0}&apos; does not support Read..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.DoesNotSupportReadInLine">
-            <summary>
-              Looks up a localized string similar to Type &apos;{0}&apos; does not support ReadInline..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.DuplicateDynamicPropertyNameFound">
-            <summary>
-              Looks up a localized string similar to Duplicate dynamic property name &apos;{0}&apos; found in open type &apos;{1}&apos;. Each dynamic property name must be unique..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.DynamicPropertyCannotBeSerialized">
-            <summary>
-              Looks up a localized string similar to The dynamic property &apos;{0}&apos; with Edm type &apos;{1}&apos; cannot be serialized..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.DynamicPropertyNameAlreadyUsedAsDeclaredPropertyName">
-            <summary>
-              Looks up a localized string similar to The name of dynamic property &apos;{0}&apos; was already used as the declared property name of open type &apos;{1}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.DynamicResourceSetTypeNameIsRequired">
-            <summary>
-              Looks up a localized string similar to The type name of the dynamic resource set &apos;{0}&apos; is required and cannot be empty. Consider using a OData type annotation explicitly..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.EditLinkNullForLocationHeader">
-            <summary>
-              Looks up a localized string similar to The edit link builder for the entity set &apos;{0}&apos; returned null. An edit link is required for the location header..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.EdmComplexObjectNullRef">
-            <summary>
-              Looks up a localized string similar to Cannot get property &apos;{0}&apos; of a null EDM object of type &apos;{1}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.EdmObjectNull">
-            <summary>
-              Looks up a localized string similar to The property &apos;EdmObject&apos; of {0} cannot be null..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.EdmTypeCannotBeNull">
-            <summary>
-              Looks up a localized string similar to The EDM type of the object of type &apos;{0}&apos; is null. The EDM type of an &apos;{1}&apos; cannot be null..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.EdmTypeNotSupported">
-            <summary>
-              Looks up a localized string similar to {0} is not a supported EDM type..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ElementClrTypeNull">
-            <summary>
-              Looks up a localized string similar to The property &apos;ElementClrType&apos; of {0} cannot be null..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.EmptyKeyTemplate">
-            <summary>
-              Looks up a localized string similar to Key template value &apos;{0}&apos; for key segment &apos;{1}&apos; is empty..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.EmptyParameterAlias">
-            <summary>
-              Looks up a localized string similar to Parameter alias &apos;{0}&apos; in segment &apos;{1}&apos; is empty..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.EmptyPathTemplate">
-            <summary>
-              Looks up a localized string similar to The route template in path template &apos;{0}&apos; is empty..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.EntityReferenceMustHasKeySegment">
-            <summary>
-              Looks up a localized string similar to The Uri &apos;{0}&apos; in the parameter is invalid..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.EntitySetMissingDuringSerialization">
-            <summary>
-              Looks up a localized string similar to The related entity set could not be found from the OData path. The related entity set is required to serialize the payload..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.EntityTypeMismatch">
-            <summary>
-              Looks up a localized string similar to The entity type &apos;{0}&apos; does not match the expected entity type &apos;{1}&apos; as set on the query context..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ErrorTypeMustBeODataErrorOrHttpError">
-            <summary>
-              Looks up a localized string similar to The type &apos;{0}&apos; is not supported by the ODataErrorSerializer. The type must be ODataError or HttpError..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ETagNotWellFormed">
-            <summary>
-              Looks up a localized string similar to The ETag is not well-formed..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ExpandFilterExpressionNotLambdaExpression">
-            <summary>
-              Looks up a localized string similar to $filter in $expand of reference navigation property &apos;{0}&apos; is not expected type &apos;{1}&apos;.
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ExpressionLexer_UnbalancedBracketExpression">
-            <summary>
-              Looks up a localized string similar to Found an unbalanced bracket &apos;{0}&apos; and &apos;{1}&apos; expression..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ExpressionLexerSyntaxError">
-            <summary>
-              Looks up a localized string similar to Syntax error at position {0} in &apos;{1}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ExpressionLexerUnterminatedStringLiteral">
-            <summary>
-              Looks up a localized string similar to There is an unterminated string literal at position {0} in &apos;{1}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.FailedToBuildEdmModelBecauseReturnTypeIsNull">
-            <summary>
-              Looks up a localized string similar to Cannot create an EDM model as the action &apos;{0}&apos; on controller &apos;{1}&apos; has a void return type..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.FailedToRetrieveTypeToBuildEdmModel">
-            <summary>
-              Looks up a localized string similar to Cannot create an EDM model as the action &apos;{0}&apos; on controller &apos;{1}&apos; has a return type &apos;{2}&apos; that does not implement IEnumerable&lt;T&gt;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.FormatterReadIsNotSupportedForType">
-            <summary>
-              Looks up a localized string similar to Reading type &apos;{0}&apos; is not supported by &apos;{1}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.FunctionNotBoundToCollectionOfEntity">
-            <summary>
-              Looks up a localized string similar to The function &apos;{0}&apos; is not bound to the collection of entity. Only functions that are bound to entities can have function links..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.FunctionNotBoundToEntity">
-            <summary>
-              Looks up a localized string similar to The function &apos;{0}&apos; is not bound to an entity. Only functions that are bound to entities can have function links..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.FunctionNotSupportedOnEnum">
-            <summary>
-              Looks up a localized string similar to The &apos;{0}&apos; function cannot be applied to an enumeration-typed argument..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.GetOnlyCollectionCannotBeArray">
-            <summary>
-              Looks up a localized string similar to The value of the property &apos;{0}&apos; on type &apos;{1}&apos; is an array. Consider adding a setter for the property..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.IdLinkNullForEntityIdHeader">
-            <summary>
-              Looks up a localized string similar to The Id link builder for the entity set &apos;{0}&apos; returned null. An Id link is required for the OData-EntityId header..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.InfiniteParameterAlias">
-            <summary>
-              Looks up a localized string similar to The parameter alias &apos;{0}&apos; is in an infinite loop..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.InputCastTypeKindNotMatch">
-            <summary>
-              Looks up a localized string similar to The input cast type &apos;{0}&apos; does not match the expected type kind &apos;{1}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.InputKeyNotMatchEntityTypeKey">
-            <summary>
-              Looks up a localized string similar to The input key count &apos;{0}&apos; does not match the number &apos;{1}&apos; of the key of entity type &apos;{2}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.InvalidAttributeRoutingTemplateSegment">
-            <summary>
-              Looks up a localized string similar to The attribute routing template contains invalid segment &apos;{0}&apos;. The template string does not start with &apos;{{&apos; or ends with &apos;}}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.InvalidBatchReaderState">
-            <summary>
-              Looks up a localized string similar to The current batch reader state &apos;{0}&apos; is invalid. The expected state is &apos;{1}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.InvalidExpansionDepthValue">
-            <summary>
-              Looks up a localized string similar to &apos;{0}&apos; should be less than or equal to &apos;{1}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.InvalidKeyInUriFound">
-            <summary>
-              Looks up a localized string similar to The key value ({0}) from request is not valid. The key value should be format of type &apos;{1}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.InvalidLastSegmentInSelectExpandPath">
-            <summary>
-              Looks up a localized string similar to The last segment &apos;{0}&apos; of the select or expand query option is not supported..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.InvalidODataRouteOnAction">
-            <summary>
-              Looks up a localized string similar to The path template &apos;{0}&apos; on the action &apos;{1}&apos; in controller &apos;{2}&apos; is not a valid OData path template. {3}.
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.InvalidODataUntypedValue">
-            <summary>
-              Looks up a localized string similar to The given untyped value &apos;{0}&apos; in payload is invalid. Consider using a OData type annotation explicitly..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.InvalidParameterValueInUriFound">
-            <summary>
-              Looks up a localized string similar to The parameter value ({0}) from request is not valid. The parameter value should be format of type &apos;{1}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.InvalidPropertyMapper">
-            <summary>
-              Looks up a localized string similar to The mapper provider must return a valid &apos;{0}&apos; instance for the given &apos;{1}&apos; IEdmType..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.InvalidPropertyMapping">
-            <summary>
-              Looks up a localized string similar to The key mapping for the property &apos;{0}&apos; can&apos;t be empty..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.InvalidSegmentInSelectExpandPath">
             <summary>
-              Looks up a localized string similar to A segment &apos;{0}&apos; within the select or expand query option is not supported..
+            This class defines an attribute that can be applied to an action to enable querying using the OData query
+            syntax. To avoid processing unexpected or malicious queries, use the validation settings on
+            <see cref="T:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions"/> to validate incoming queries.
             </summary>
         </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.InvalidTemplateLiteral">
+        <member name="M:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions.#ctor">
             <summary>
-              Looks up a localized string similar to The template string &apos;{0}&apos; of &apos;{1}&apos; is not a valid template literal. And a template literal should wrapper with &apos;{&apos; and &apos;}&apos;..
+            Enables a controller action to support OData query parameters.
             </summary>
         </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.JsonConverterDoesnotSupportRead">
+        <member name="P:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions.EnsureStableOrdering">
             <summary>
-              Looks up a localized string similar to &apos;{0}&apos; is internal and should never be deserialized into..
+            Gets or sets a value indicating whether query composition should
+            alter the original query when necessary to ensure a stable sort order.
             </summary>
+            <value>A <c>true</c> value indicates the original query should
+            be modified when necessary to guarantee a stable sort order.
+            A <c>false</c> value indicates the sort order can be considered
+            stable without modifying the query.  Query providers that ensure
+            a stable sort order should set this value to <c>false</c>.
+            The default value is <c>true</c>.</value>
         </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.KeyTemplateMustBeInCurlyBraces">
+        <member name="P:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions.HandleNullPropagation">
             <summary>
-              Looks up a localized string similar to Key template value &apos;{0}&apos; for key segment &apos;{1}&apos; does not start with &apos;{{&apos; or ends with &apos;}}&apos;..
+            Gets or sets a value indicating how null propagation should
+            be handled during query composition.
             </summary>
+            <value>
+            The default is <see cref="F:Microsoft.AspNetCore.OData.Query.HandleNullPropagationOption.Default"/>.
+            </value>
         </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.KeyValueCannotBeNull">
+        <member name="P:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions.EnableConstantParameterization">
             <summary>
-              Looks up a localized string similar to Key property &apos;{0}&apos; of type &apos;{1}&apos; is null. Key properties cannot have null values..
+            Gets or sets a value indicating whether constants should be parameterized. Parameterizing constants
+            would result in better performance with Entity framework.
             </summary>
+            <value>The default value is <c>true</c>.</value>
         </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.MappingDoesNotContainResourceType">
+        <member name="P:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions.EnableCorrelatedSubqueryBuffering">
             <summary>
-              Looks up a localized string similar to The provided mapping does not contain a resource for the resource type &apos;{0}&apos;..
+            Gets or sets a value indicating whether queries with expanded navigations should be formulated
+            to encourage correlated sub-query results to be buffered.
+            Buffering correlated sub-query results can reduce the number of queries from N + 1 to 2
+            by buffering results from the sub-query.
             </summary>
+            <value>The default value is <c>false</c>.</value>
         </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.MaxAnyAllExpressionLimitExceeded">
+        <member name="P:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions.MaxAnyAllExpressionDepth">
             <summary>
-              Looks up a localized string similar to The Any/All nesting limit of &apos;{0}&apos; has been exceeded. &apos;{1}&apos; can be configured on ODataQuerySettings or EnableQueryAttribute..
+            Gets or sets the maximum depth of the Any or All elements nested inside the query. This limit helps prevent
+            Denial of Service attacks.
             </summary>
+            <value>
+            The maximum depth of the Any or All elements nested inside the query. The default value is 1.
+            </value>
         </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.MaxExpandDepthExceeded">
+        <member name="P:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions.MaxNodeCount">
             <summary>
-              Looks up a localized string similar to The request includes a $expand path which is too deep. The maximum depth allowed is {0}. To increase the limit, set the &apos;{1}&apos; property on EnableQueryAttribute or ODataValidationSettings, or set the &apos;MaxDepth&apos; property in ExpandAttribute..
+            Gets or sets the maximum number of nodes inside the $filter syntax tree.
             </summary>
+            <value>The default value is 100.</value>
         </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.MaxNodeLimitExceeded">
+        <member name="P:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions.PageSize">
             <summary>
-              Looks up a localized string similar to The node count limit of &apos;{0}&apos; has been exceeded. To increase the limit, set the &apos;{1}&apos; property on EnableQueryAttribute or ODataValidationSettings..
+            Gets or sets the maximum number of query results to send back to clients.
             </summary>
+            <value>
+            The maximum number of query results to send back to clients.
+            </value>
         </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.MissingNonODataContainer">
+        <member name="P:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions.HandleReferenceNavigationPropertyExpandFilter">
             <summary>
-              Looks up a localized string similar to Cannot find the services container for the non-OData route. This can occur when using OData components on the non-OData route and is usually a configuration issue. Call EnableDependencyInjection() to enable OData components on non-OData routes. This may also occur when a request was mistakenly handled by the ASP.NET Core routing layer instead of the OData routing layer, for instance the URL does not include the OData route prefix configured via a call to MapODataServiceRoute()..
+            Honor $filter inside $expand of non-collection navigation property.
+            The expanded property is only populated when the filter evaluates to true.
+            This setting is false by default.
             </summary>
         </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.MissingODataContainer">
+        <member name="P:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions.AllowedQueryOptions">
             <summary>
-              Looks up a localized string similar to Cannot find the services container for route &apos;{0}&apos;. This should not happen and represents a bug..
+            Gets or sets the query parameters that are allowed in queries.
             </summary>
+            <value>The default includes all query options: $filter, $skip, $top, $orderby, $expand, $select, $count,
+            $format, $skiptoken and $deltatoken.</value>
         </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.MissingODataServices">
+        <member name="P:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions.AllowedFunctions">
             <summary>
-              Looks up a localized string similar to Cannot find &apos;{0}&apos;. The OData services have not been configured. Are you missing a call to AddOData()?.
+            Gets or sets a value that represents a list of allowed functions used in the $filter query. Supported
+            functions include the following:
+            <list type="definition">
+            <item>
+            <term>String related:</term>
+            <description>contains, endswith, startswith, length, indexof, substring, tolower, toupper, trim,
+            concat, matchesPattern e.g. ~/Customers?$filter=length(CompanyName) eq 19</description>
+            </item>
+            <item>
+            <term>DateTime related:</term>
+            <description>year, month, day, hour, minute, second, fractionalseconds, date, time
+            e.g. ~/Employees?$filter=year(BirthDate) eq 1971</description>
+            </item>
+            <item>
+            <term>Math related:</term>
+            <description>round, floor, ceiling</description>
+            </item>
+            <item>
+            <term>Type related:</term>
+            <description>isof, cast</description>
+            </item>
+            <item>
+            <term>Collection related:</term>
+            <description>any, all</description>
+            </item>
+            </list>
             </summary>
         </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.MissingParameterAlias">
+        <member name="P:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions.AllowedArithmeticOperators">
             <summary>
-              Looks up a localized string similar to Missing the parameter alias &apos;{0}&apos; in the request query string..
+            Gets or sets a value that represents a list of allowed arithmetic operators including 'add', 'sub', 'mul',
+            'div', 'mod'.
             </summary>
         </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.MissingRequiredParameterInOperation">
+        <member name="P:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions.AllowedLogicalOperators">
             <summary>
-              Looks up a localized string similar to Missing the required parameter &apos;{0}&apos; is in the operation &apos;{1}&apos; parameter mapping..
+            Gets or sets a value that represents a list of allowed logical Operators such as 'eq', 'ne', 'gt', 'ge',
+            'lt', 'le', 'and', 'or', 'not'.
             </summary>
         </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ModelBinderUtil_ModelMetadataCannotBeNull">
-            <summary>
-              Looks up a localized string similar to The binding context cannot have a null ModelMetadata..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ModelBinderUtil_ValueCannotBeEnum">
-            <summary>
-              Looks up a localized string similar to The binding value &apos;{0}&apos; cannot be bound to the enum type &apos;{1}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ModelBindingContextMustHaveRequest">
-            <summary>
-              Looks up a localized string similar to The model binding context requires an attached request in order to model binding..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ModelMissingFromReadContext">
-            <summary>
-              Looks up a localized string similar to The EDM model is missing on the read context. The model is required on the read context to deserialize the payload..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ModelPrefixAlreadyUsed">
-            <summary>
-              Looks up a localized string similar to The prefix &apos;{0}&apos; was already used for other Edm model..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.MultipleActionImportFound">
-            <summary>
-              Looks up a localized string similar to Found multiple action imports with same &apos;{0}&apos; name within an entity container...
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.MultipleMatchingClrTypesForEdmType">
-            <summary>
-              Looks up a localized string similar to More than one matching CLR type found for the EDM type {0}.\nThe matching CLR types are {1}..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.MultipleSingleLiteralNotAllowed">
-            <summary>
-              Looks up a localized string similar to &apos;{0}&apos; is not a valid expression.Single literal is only for single key. Multiple keys should use key=value..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.NavigationSourceMissingDuringDeserialization">
-            <summary>
-              Looks up a localized string similar to The related entity set or singleton cannot be found from the OData path. The related entity set or singleton is required to deserialize the payload..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.NavigationSourceMissingDuringSerialization">
-            <summary>
-              Looks up a localized string similar to The related entity set or singleton cannot be found from the OData path. The related entity set or singleton is required to serialize the payload..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.NestedCollectionsNotSupported">
-            <summary>
-              Looks up a localized string similar to The type &apos;{0}&apos; is a nested collection type. Nested collection types are not allowed..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.NestedPropertyNotfound">
-            <summary>
-              Looks up a localized string similar to Cannot find nested property &apos;{0}&apos; on the resource type &apos;{1}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.NonSelectExpandOnSingleEntity">
-            <summary>
-              Looks up a localized string similar to The requested resource is not a collection. Query options $filter, $orderby, $count, $skip, and $top can be applied only on collections..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.NotAllowedArithmeticOperator">
-            <summary>
-              Looks up a localized string similar to Arithmetic operator &apos;{0}&apos; is not allowed. To allow it, set the &apos;{1}&apos; property on EnableQueryAttribute or QueryValidationSettings..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.NotAllowedFunction">
-            <summary>
-              Looks up a localized string similar to Function &apos;{0}&apos; is not allowed. To allow it, set the &apos;{1}&apos; property on EnableQueryAttribute or QueryValidationSettings..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.NotAllowedLogicalOperator">
-            <summary>
-              Looks up a localized string similar to Logical operator &apos;{0}&apos; is not allowed. To allow it, set the &apos;{1}&apos; property on EnableQueryAttribute or QueryValidationSettings..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.NotAllowedOrderByProperty">
-            <summary>
-              Looks up a localized string similar to Order by &apos;{0}&apos; is not allowed. To allow it, set the &apos;{1}&apos; property on EnableQueryAttribute or QueryValidationSettings..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.NotAllowedQueryOption">
-            <summary>
-              Looks up a localized string similar to Query option &apos;{0}&apos; is not allowed. To allow it, set the &apos;{1}&apos; property on EnableQueryAttribute or QueryValidationSettings..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.NotCountableEntitySetUsedForCount">
-            <summary>
-              Looks up a localized string similar to The entity set &apos;{0}&apos; cannot be used for $count..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.NotCountablePropertyUsedForCount">
-            <summary>
-              Looks up a localized string similar to The property &apos;{0}&apos; cannot be used for $count..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.NotExpandablePropertyUsedInExpand">
-            <summary>
-              Looks up a localized string similar to The property &apos;{0}&apos; cannot be used in the $expand query option..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.NotFilterablePropertyUsedInFilter">
-            <summary>
-              Looks up a localized string similar to The property &apos;{0}&apos; cannot be used in the $filter query option..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.NotNavigablePropertyUsedInNavigation">
-            <summary>
-              Looks up a localized string similar to The property &apos;{0}&apos; cannot be used for navigation..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.NotSelectablePropertyUsedInSelect">
-            <summary>
-              Looks up a localized string similar to The property &apos;{0}&apos; cannot be used in the $select query option..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.NotSortablePropertyUsedInOrderBy">
-            <summary>
-              Looks up a localized string similar to The property &apos;{0}&apos; cannot be used in the $orderby query option..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.NotSupportedTransformationKind">
-            <summary>
-              Looks up a localized string similar to Transformation kind {0} is not supported..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.NullContainer">
-            <summary>
-              Looks up a localized string similar to The container built by the container builder must not be null..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.NullContainerBuilder">
-            <summary>
-              Looks up a localized string similar to The container builder created by the container builder factory must not be null..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.NullElementInCollection">
-            <summary>
-              Looks up a localized string similar to Collections cannot contain null elements..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ODataFunctionNotSupported">
-            <summary>
-              Looks up a localized string similar to Unknown function &apos;{0}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ODataPathMissing">
-            <summary>
-              Looks up a localized string similar to The operation cannot be completed because no ODataPath is available for the request..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.OnlySingleValueNodeSupported">
-            <summary>
-              Looks up a localized string similar to Only SingleValueNode supported..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.OperationIsNotBound">
-            <summary>
-              Looks up a localized string similar to The input operation &apos;{0}&apos; is not a bound &apos;{1}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.OperationMustBeUniqueInEntitySetContainer">
-            <summary>
-              Looks up a localized string similar to Action import and function import &apos;{0}&apos; MUST be unique within an entity container..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.OrderByClauseInvalid">
-            <summary>
-              Looks up a localized string similar to OrderBy clause kind &apos;{0}&apos; is not valid. Only kind &apos;{1}&apos; is accepted..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.OrderByClauseNotSupported">
-            <summary>
-              Looks up a localized string similar to Only ordering by properties is supported for non-primitive collections. Expressions are not supported..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.OrderByDuplicateIt">
-            <summary>
-              Looks up a localized string similar to Multiple &apos;$it&apos; nodes are not supported in &apos;$orderby&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.OrderByDuplicateProperty">
-            <summary>
-              Looks up a localized string similar to Duplicate property named &apos;{0}&apos; is not supported in &apos;$orderby&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.OrderByNodeCountExceeded">
-            <summary>
-              Looks up a localized string similar to The number of clauses in $orderby query option exceeded the maximum number allowed. The maximum number of $orderby clauses allowed is {0}..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ParameterTemplateMustBeInCurlyBraces">
-            <summary>
-              Looks up a localized string similar to Parameter template &apos;{0}&apos; in segment &apos;{1}&apos; does not start with &apos;{{&apos; or ends with &apos;}}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ParameterTypeIsNotCollection">
-            <summary>
-              Looks up a localized string similar to The type &apos;{0}&apos; of the parameter &apos;{1}&apos; must be a collection..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.PropertyCannotBeConverted">
-            <summary>
-              Looks up a localized string similar to The value cannot be converted to type {0}..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.PropertyIsNotCollection">
-            <summary>
-              Looks up a localized string similar to The type &apos;{0}&apos; of the property &apos;{1}&apos; on type &apos;{2}&apos; must be a collection..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.PropertyMustBeBoolean">
-            <summary>
-              Looks up a localized string similar to The value must be a boolean..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.PropertyMustBeDateTimeOffsetOrDate">
-            <summary>
-              Looks up a localized string similar to The value must be a DateTimeOffset or Date..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.PropertyMustBeEnum">
-            <summary>
-              Looks up a localized string similar to The value with type &apos;{0}&apos; must have type &apos;{1}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.PropertyMustBeString">
-            <summary>
-              Looks up a localized string similar to The value must be a string..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.PropertyMustBeStringLengthOne">
-            <summary>
-              Looks up a localized string similar to The value must be a string with a length of 1..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.PropertyMustBeStringMaxLengthOne">
-            <summary>
-              Looks up a localized string similar to The value must be a string with a maximum length of 1..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.PropertyMustBeTimeOfDay">
-            <summary>
-              Looks up a localized string similar to The value must be a Edm.TimeOfDay..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.PropertyMustHavePublicGetterAndSetter">
-            <summary>
-              Looks up a localized string similar to The PropertyInfo provided must have public &apos;get&apos; and &apos;set&apos; accessor methods..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.PropertyNotFound">
-            <summary>
-              Looks up a localized string similar to The EDM instance of type &apos;{0}&apos; is missing the property &apos;{1}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.PropertyNotFoundOnPathExpression">
-            <summary>
-              Looks up a localized string similar to Can not resolve the property using property path &apos;{0}&apos; from type &apos;{1}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.PropertyOrPathWasRemovedFromContext">
-            <summary>
-              Looks up a localized string similar to Property or path {0} is not available in the current context. It was removed in earlier transformation..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.PropertyTypeOverflow">
-            <summary>
-              Looks up a localized string similar to The value has a value that is out of range of type {0}..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.PropertyUnrecognizedFormat">
-            <summary>
-              Looks up a localized string similar to The value has a format that is not recognized by type {0}..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.QueryCannotBeEmpty">
-            <summary>
-              Looks up a localized string similar to The value for OData query &apos;{0}&apos; cannot be empty..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.QueryGetModelMustNotReturnNull">
-            <summary>
-              Looks up a localized string similar to A model is required for querying. Consider implementing the EnableQueryAttribute.GetModel method never to return a null value..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.QueryNodeBindingNotSupported">
-            <summary>
-              Looks up a localized string similar to Binding OData QueryNode of kind &apos;{0}&apos; is not supported by &apos;{1}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.QueryNodeValidationNotSupported">
-            <summary>
-              Looks up a localized string similar to Validating OData QueryNode of kind {0} is not supported by {1}..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.QueryParameterNotSupported">
-            <summary>
-              Looks up a localized string similar to The query parameter &apos;{0}&apos; is not supported..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ReadFromStreamAsyncMustHaveRequest">
-            <summary>
-              Looks up a localized string similar to The OData formatter requires an attached request in order to deserialize..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ReferenceNavigationPropertyExpandFilterVisitorUnexpectedParameter">
-            <summary>
-              Looks up a localized string similar to Found unexpected parameter &apos;{0}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.RequestMustHaveModel">
-            <summary>
-              Looks up a localized string similar to The request must have an associated EDM model. Consider registering Edm model calling AddOData()..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.RequestNotActionInvocation">
-            <summary>
-              Looks up a localized string similar to The last segment of the request URI &apos;{0}&apos; was not recognized as an OData action..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.RequiredParametersNotSubsetOfFunctionParameters">
-            <summary>
-              Looks up a localized string similar to The input parameters &apos;{0}&apos; is not subset of function parameters &apos;{1}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ResourceTypeNotInModel">
-            <summary>
-              Looks up a localized string similar to Cannot find the resource type &apos;{0}&apos; in the model..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.RootElementNameMissing">
-            <summary>
-              Looks up a localized string similar to The &apos;RootElementName&apos; property is required on &apos;{0}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.RouteOptionDisabledKeySegment">
-            <summary>
-              Looks up a localized string similar to The route option disables key in parenthesis and key as segment. At least one option should enable..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.RouteOptionDisabledOperationSegment">
-            <summary>
-              Looks up a localized string similar to The route option disables qualified and unqualified operation call. At least one option should enable..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.RouteServicesAlreadyExist">
-            <summary>
-              Looks up a localized string similar to A dependency injection container for this request already exists..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.SegmentShouldBeKind">
-            <summary>
-              Looks up a localized string similar to The input segment should be &apos;{0}&apos; in &apos;{1}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.SelectExpandEmptyOrNull">
-            <summary>
-              Looks up a localized string similar to &apos;select&apos; and &apos;expand&apos; cannot be both null or empty..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.SelectExpandEmptyOrWhitespace">
-            <summary>
-              Looks up a localized string similar to &apos;select&apos; and &apos;expand&apos; cannot be empty or whitespace. Omit the parameter from the query if it is not used..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.SelectionTypeNotSupported">
-            <summary>
-              Looks up a localized string similar to $select does not support selections of type &apos;{0}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.SelectNonStructured">
-            <summary>
-              Looks up a localized string similar to The type &apos;{0}&apos; is not a structured type. Only structured types support $select and $expand..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ShouldHaveNavigationPropertyInNavigationExpandPath">
-            <summary>
-              Looks up a localized string similar to A navigation property expand path should have navigation property in the path..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.SingleResultHasMoreThanOneEntity">
-            <summary>
-              Looks up a localized string similar to The action &apos;{0}&apos; on controller &apos;{1}&apos; returned a {2} containing more than one element. {2} must have zero or one elements..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.SkipTokenParseError">
-            <summary>
-              Looks up a localized string similar to Unable to parse the skiptoken value &apos;{0}&apos;. Skiptoken value should always be server generated..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.SkipTokenProcessingError">
-            <summary>
-              Looks up a localized string similar to Unable to get property values from the skiptoken value..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.SkipTopLimitExceeded">
-            <summary>
-              Looks up a localized string similar to The limit of &apos;{0}&apos; for {1} query has been exceeded. The value from the incoming request is &apos;{2}&apos;..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.TargetKindNotImplemented">
-            <summary>
-              Looks up a localized string similar to &apos;{0}&apos; of kind &apos;{1}&apos; is not implemented..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.TypeCannotBeDeserialized">
-            <summary>
-              Looks up a localized string similar to &apos;{0}&apos; cannot be deserialized using the OData input formatter..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.TypeCannotBeSerialized">
-            <summary>
-              Looks up a localized string similar to &apos;{0}&apos; cannot be serialized using the OData output formatter..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.TypeMustBeEntity">
-            <summary>
-              Looks up a localized string similar to {0} is not an entity type. Only entity types are supported..
-            </summary>
-        </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.TypeMustBeEnumOrNullableEnum">
-            <summary>
-              Looks up a localized string similar to The type &apos;{0}&apos; must be an enum or Nullable&lt;T&gt; where T is an enum type..
-            </summary>
+        <member name="P:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions.AllowedOrderByProperties">
+             <summary>
+             <para>Gets or sets a string with comma separated list of property names. The queryable result can only be
+             ordered by those properties defined in this list.</para>
+            
+             <para>Note, by default this string is null, which means it can be ordered by any property.</para>
+            
+             <para>For example, setting this value to null or empty string means that we allow ordering the queryable
+             result by any properties. Setting this value to "Name" means we only allow queryable result to be ordered
+             by Name property.</para>
+             </summary>
         </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.TypeMustBeRelated">
+        <member name="P:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions.MaxSkip">
             <summary>
-              Looks up a localized string similar to The type &apos;{0}&apos; does not inherit from and is not a base type of &apos;{1}&apos;..
+            Gets or sets the max value of $skip that a client can request.
             </summary>
         </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.TypeMustBeResourceSet">
+        <member name="P:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions.MaxTop">
             <summary>
-              Looks up a localized string similar to &apos;{0}&apos; is not a resource set type. Only resource set are supported..
+            Gets or sets the max value of $top that a client can request.
             </summary>
         </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.TypeOfDynamicPropertyNotSupported">
+        <member name="P:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions.MaxExpansionDepth">
             <summary>
-              Looks up a localized string similar to The type &apos;{0}&apos; of dynamic property &apos;{1}&apos; is not supported..
+            Gets or sets the max expansion depth for the $expand query option. To disable the maximum expansion depth
+            check, set this property to 0.
             </summary>
         </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.UnableToDetermineBaseUrl">
+        <member name="P:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions.MaxOrderByNodeCount">
             <summary>
-              Looks up a localized string similar to The OData formatter was unable to determine the base URI for the request. The request must be processed by an OData route for the OData formatter to serialize the response..
+            Gets or sets the maximum number of expressions that can be present in the $orderby.
             </summary>
         </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.UnableToDetermineMetadataUrl">
+        <member name="M:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions.CreateQueryOptionsOnExecuting(System.IServiceProvider)">
             <summary>
-              Looks up a localized string similar to The OData formatter must be able to determine the metadata URL for a request in order to serialize the response..
+            Creates the <see cref="T:Microsoft.AspNetCore.OData.Query.ODataQueryOptions"/> for action executing validation.
             </summary>
+            <param name="actionExecutingContext">The action executing context.</param>
+            <returns>The created <see cref="T:Microsoft.AspNetCore.OData.Query.ODataQueryOptions"/> or null if we can't create it during action executing.</returns>
         </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.UnableToIdentifyUniqueProperty">
+        <member name="M:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions.CreateAndValidateQueryOptions``1(Microsoft.AspNetCore.Http.HttpRequest,Microsoft.AspNetCore.OData.Query.ODataQueryContext)">
             <summary>
-              Looks up a localized string similar to Unable to identify a unique property named &apos;{0}&apos;..
+            Create and validate a new instance of <see cref="T:Microsoft.AspNetCore.OData.Query.ODataQueryOptions"/> from a query and context during action executed.
+            Developers can override this virtual method to provide its own <see cref="T:Microsoft.AspNetCore.OData.Query.ODataQueryOptions"/>.
             </summary>
+            <param name="request">The incoming request.</param>
+            <param name="queryContext">The query context.</param>
+            <returns>The created <see cref="T:Microsoft.AspNetCore.OData.Query.ODataQueryOptions"/>.</returns>
         </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.UnaryNodeValidationNotSupported">
+        <member name="M:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions.SingleOrDefault(System.Linq.IQueryable,Microsoft.AspNetCore.Mvc.Controllers.ControllerActionDescriptor)">
             <summary>
-              Looks up a localized string similar to Validating OData UnaryOperatorNode of kind {0} is not supported by {1}..
+            Get a single or default value from a collection.
             </summary>
+            <param name="queryable">The response value as <see cref="T:System.Linq.IQueryable"/>.</param>
+            <param name="actionDescriptor">The action context, i.e. action and controller name.</param>
+            <returns></returns>
         </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.UnexpectedElementType">
+        <member name="M:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions.ValidateSelectExpandOnly(Microsoft.AspNetCore.OData.Query.ODataQueryOptions)">
             <summary>
-              Looks up a localized string similar to The element type &apos;{0}&apos; of the given collection type &apos;{1}&apos; is not of the type &apos;{2}&apos;..
+            Validate the select and expand options.
             </summary>
+            <param name="queryOptions">The query options.</param>
         </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.UnsupportedEdmType">
+        <member name="M:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions.GetODataQueryContext(System.Object,System.Linq.IQueryable,Microsoft.AspNetCore.Mvc.Controllers.ControllerActionDescriptor,Microsoft.AspNetCore.Http.HttpRequest)">
             <summary>
-              Looks up a localized string similar to The EDM type &apos;{0}&apos; of kind &apos;{1}&apos; is not supported..
+            Get the ODaya query context.
             </summary>
+            <param name="responseValue">The response value.</param>
+            <param name="singleResultCollection">The content as SingleResult.Queryable.</param>
+            <param name="actionDescriptor">The action context, i.e. action and controller name.</param>
+            <param name="request">The OData path.</param>
+            <returns></returns>
         </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.UnsupportedEdmTypeKind">
+        <member name="M:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions.GetElementType(System.Object,System.Linq.IQueryable,Microsoft.AspNetCore.Mvc.Controllers.ControllerActionDescriptor)">
             <summary>
-              Looks up a localized string similar to Found unsupported EdmTypeKind &apos;{0}&apos; in list of available types..
+            Get the element type.
             </summary>
+            <param name="responseValue">The response value.</param>
+            <param name="singleResultCollection">The content as SingleResult.Queryable.</param>
+            <param name="actionDescriptor">The action context, i.e. action and controller name.</param>
+            <returns></returns>
         </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.UriFunctionClrBinderAlreadyBound">
+        <member name="M:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions.ValidateQuery(Microsoft.AspNetCore.Http.HttpRequest,Microsoft.AspNetCore.OData.Query.ODataQueryOptions)">
             <summary>
-              Looks up a localized string similar to The function &apos;{0}&apos; is already bound to another method..
+            Validates the OData query in the incoming request. By default, the implementation throws an exception if
+            the query contains unsupported query parameters. Override this method to perform additional validation of
+            the query.
             </summary>
+            <param name="request">The incoming request.</param>
+            <param name="queryOptions">
+            The <see cref="T:Microsoft.AspNetCore.OData.Query.ODataQueryOptions"/> instance constructed based on the incoming request.
+            </param>
         </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.UriQueryStringInvalid">
+        <member name="M:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions.ContainsAutoSelectExpandProperty(System.Object,System.Linq.IQueryable,Microsoft.AspNetCore.Mvc.Controllers.ControllerActionDescriptor,Microsoft.AspNetCore.Http.HttpRequest)">
             <summary>
-              Looks up a localized string similar to The query specified in the URI is not valid. {0}.
+            Determine if the query contains auto select and expand property.
             </summary>
+            <param name="responseValue">The response value.</param>
+            <param name="singleResultCollection">The content as SingleResult.Queryable.</param>
+            <param name="actionDescriptor">The action context, i.e. action and controller name.</param>
+            <param name="request">The Http request.</param>
+            <returns>true/false</returns>
         </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.ValueIsInvalid">
+        <member name="M:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions.GetModel(System.Type,Microsoft.AspNetCore.Http.HttpRequest,Microsoft.AspNetCore.Mvc.Abstractions.ActionDescriptor)">
             <summary>
-              Looks up a localized string similar to The value &apos;{0}&apos; is invalid. {1}.
+            Gets the EDM model for the given type and request.Override this method to customize the EDM model used for
+            querying.
             </summary>
+            <param name="elementClrType">The CLR type to retrieve a model for.</param>
+            <param name="request">The request message to retrieve a model for.</param>
+            <param name="actionDescriptor">The action descriptor for the action being queried on.</param>
+            <returns>The EDM model for the given type and request.</returns>
         </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.WriteObjectInlineNotSupported">
+        <member name="T:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions.RequestQueryData">
             <summary>
-              Looks up a localized string similar to {0} does not support WriteObjectInline..
+            Holds request level query information.
             </summary>
         </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.WriteObjectNotSupported">
+        <member name="P:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions.RequestQueryData.QueryValidationRunBeforeActionExecution">
             <summary>
-              Looks up a localized string similar to {0} does not support WriteObject..
+            Gets or sets a value indicating whether query validation was run before action (controller method) is executed.
             </summary>
+            <remarks>
+            Marks if the query validation was run before the action execution. This is not always possible.
+            For cases where the run failed before action execution. We will run validation on result.
+            </remarks>
         </member>
-        <member name="P:Microsoft.AspNetCore.OData.SRResources.WriteToResponseAsyncMustHaveRequest">
+        <member name="P:Microsoft.AspNetCore.OData.Query.ODataServiceCollectionQueryOptionsExtensions.RequestQueryData.ProcessedQueryOptions">
             <summary>
-              Looks up a localized string similar to The OData formatter requires an attached request in order to serialize..
+            Gets or sets the processed query options.
             </summary>
+            <remarks>
+            Stores the processed query options to be used later if OnActionExecuting was able to verify the query.
+            This is because ValidateQuery internally modifies query options (expands are prime example of this).
+            </remarks>
         </member>
         <member name="T:Microsoft.AspNetCore.OData.Query.AllowedArithmeticOperators">
             <summary>
@@ -12375,7 +11590,7 @@
         </member>
         <member name="M:Microsoft.AspNetCore.OData.Query.Validator.OrderByQueryValidator.ValidateBinaryOperatorNode(Microsoft.OData.UriParser.BinaryOperatorNode,Microsoft.AspNetCore.OData.Query.Validator.OrderByValidatorContext)">
             <summary>
-            override this method to restrict the binary operators inside the $orderby query.
+            Override this method to restrict the binary operators inside the $orderby query.
             That includes all the logical operators except 'not' and all math operators.
             </summary>
             <param name="binaryOperatorNode">The binary operator node to validate.</param>
@@ -12456,7 +11671,7 @@
             <summary>
             The recursive method that validate most of the query node type is of CollectionNode type.
             </summary>
-            <param name="node">The single value node.</param>
+            <param name="node">The collection value node.</param>
             <param name="validatorContext">The validator context.</param>
         </member>
         <member name="M:Microsoft.AspNetCore.OData.Query.Validator.OrderByQueryValidator.ValidateCollectionResourceCastNode(Microsoft.OData.UriParser.CollectionResourceCastNode,Microsoft.AspNetCore.OData.Query.Validator.OrderByValidatorContext)">
@@ -12882,6 +12097,1091 @@
         <member name="P:Microsoft.AspNetCore.OData.Query.Wrapper.SelectExpandWrapper`1.Instance">
             <summary>
             Gets or sets the instance of the element being selected and expanded.
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNetCore.OData.ODataUriFunctions">
+            <summary>
+            OData UriFunctions helper.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.OData.ODataUriFunctions.AddCustomUriFunction(System.String,Microsoft.OData.UriParser.FunctionSignatureWithReturnType,System.Reflection.MethodInfo)">
+            <summary>
+            This is a shortcut of adding the custom FunctionSignature through 'CustomUriFunctions' class and
+            binding the function name to it's MethodInfo through 'UriFunctionsBinder' class.
+            See these classes documentations.
+            In case of an exception, both operations(adding the signature and binding the function) will be undone.
+            </summary>
+            <param name="functionName">The uri function name that appears in the OData request uri.</param>
+            <param name="functionSignature">The new custom function signature.</param>
+            <param name="methodInfo">The MethodInfo to bind the given function name.</param>
+            <exception cref="T:System.Exception">Any exception thrown by 'CustomUriFunctions.AddCustomUriFunction' and 'UriFunctionBinder.BindUriFunctionName' methods.</exception>
+        </member>
+        <member name="M:Microsoft.AspNetCore.OData.ODataUriFunctions.RemoveCustomUriFunction(System.String,Microsoft.OData.UriParser.FunctionSignatureWithReturnType,System.Reflection.MethodInfo)">
+            <summary>
+            This is a shortcut of removing the FunctionSignature through 'CustomUriFunctions' class and
+            unbinding the function name from it's MethodInfo through 'UriFunctionsBinder' class.
+            See these classes documentations.
+            </summary>
+            <param name="functionName">The uri function name that appears in the OData request uri.</param>
+            <param name="functionSignature">The new custom function signature.</param>
+            <param name="methodInfo">The MethodInfo to bind the given function name.</param>
+            <exception cref="T:System.Exception">Any exception thrown by 'CustomUriFunctions.RemoveCustomUriFunction' and 'UriFunctionsBinder.UnbindUriFunctionName' methods.</exception>
+            <returns>'True' if the function signature has successfully removed and unbounded. 'False' otherwise.</returns>
+        </member>
+        <member name="T:Microsoft.AspNetCore.OData.SRResources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ActionContextMustHaveDescriptor">
+            <summary>
+              Looks up a localized string similar to The HttpActionContext.ActionDescriptor is null..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ActionDescriptorNotControllerActionDescriptor">
+            <summary>
+              Looks up a localized string similar to ActionDescriptor is not ControllerActionDescriptor..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ActionExecutedContextMustHaveRequest">
+            <summary>
+              Looks up a localized string similar to The HttpExecutedActionContext.Request is null..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ActionNotBoundToCollectionOfEntity">
+            <summary>
+              Looks up a localized string similar to The action &apos;{0}&apos; is not bound to the collection of entity. Only actions that are bound to entities can have action links..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ActionNotBoundToEntity">
+            <summary>
+              Looks up a localized string similar to The action &apos;{0}&apos; is not bound to an entity. Only actions that are bound to entities can have action links..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.AggregateKindNotSupported">
+            <summary>
+              Looks up a localized string similar to {0} type of aggregation is not supported..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.AggregationMethodNotSupported">
+            <summary>
+              Looks up a localized string similar to Aggregation method &apos;{0}&apos; is not supported..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.AggregationNotSupportedForType">
+            <summary>
+              Looks up a localized string similar to Aggregation &apos;{0}&apos; not supported for property &apos;{1}&apos; of type &apos;{2}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.AmbiguousNavigationSourceNameFound">
+            <summary>
+              Looks up a localized string similar to Ambiguous navigation source (entity set or singleton) name &apos;{0}&apos; found. Please use correct navigation source name case..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.AmbiguousPropertyNameFound">
+            <summary>
+              Looks up a localized string similar to Ambiguous property name &apos;{0}&apos; found. Please use correct property name case..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.AmbiguousTypeNameFound">
+            <summary>
+              Looks up a localized string similar to Ambiguous type name &apos;{0}&apos; found. Please use correct type name case..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ApplyQueryOptionNotSupportedForLinq2SQL">
+            <summary>
+              Looks up a localized string similar to $apply query options not supported for LINQ to SQL providers..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ApplyToOnUntypedQueryOption">
+            <summary>
+              Looks up a localized string similar to The query option is not bound to any CLR type. &apos;{0}&apos; is only supported with a query option bound to a CLR type..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ArgumentMustBeGreaterThanOrEqualTo">
+            <summary>
+              Looks up a localized string similar to Value must be greater than or equal to {0}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ArgumentMustBeLessThanOrEqualTo">
+            <summary>
+              Looks up a localized string similar to Value must be less than or equal to {0}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ArgumentMustBeOfType">
+            <summary>
+              Looks up a localized string similar to The argument must be of type &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ArgumentNullOrEmpty">
+            <summary>
+              Looks up a localized string similar to The argument &apos;{0}&apos; is null or empty..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.BatchRequestInvalidMediaType">
+            <summary>
+              Looks up a localized string similar to The batch request must have &apos;{0}&apos; or &apos;{1}&apos; as the media type..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.BatchRequestMissingBody">
+            <summary>
+              Looks up a localized string similar to The &apos;Body&apos; property on the batch request cannot be null..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.BatchRequestMissingBoundary">
+            <summary>
+              Looks up a localized string similar to The batch request must have a boundary specification in the &quot;Content-Type&quot; header..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.BatchRequestMissingContentType">
+            <summary>
+              Looks up a localized string similar to The batch request must have a &quot;Content-Type&quot; header..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.BinaryOperatorNotSupported">
+            <summary>
+              Looks up a localized string similar to A binary operator with incompatible types was detected. Found operand types &apos;{0}&apos; and &apos;{1}&apos; for operator kind &apos;{2}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.CannotAddToNullCollection">
+            <summary>
+              Looks up a localized string similar to The property &apos;{0}&apos; on type &apos;{1}&apos; returned a null value. The input stream contains collection items which cannot be added if the instance is null..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.CannotApplyETagOfT">
+            <summary>
+              Looks up a localized string similar to Cannot apply {0} of &apos;{1}&apos; to {2} of &apos;{3}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.CannotApplyODataQueryOptionsOfT">
+            <summary>
+              Looks up a localized string similar to Cannot apply {0} of &apos;{1}&apos; to {2} of &apos;{3}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.CannotCastFilter">
+            <summary>
+              Looks up a localized string similar to Cannot cast $filter of type &apos;{0}&apos; to type &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.CannotDeserializeUnknownProperty">
+            <summary>
+              Looks up a localized string similar to The property &apos;{0}&apos; does not exist on type &apos;{1}&apos;. Make sure to only use property names that are defined by the type..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.CannotFindKeyInEntityType">
+            <summary>
+              Looks up a localized string similar to Cannot find key &apos;{0}&apos; in the &apos;{1}&apos; type..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.CannotFindParameterInOperation">
+            <summary>
+              Looks up a localized string similar to Cannot find parameter &apos;{0}&apos; is in the operation &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.CannotGetEnumClrMember">
+            <summary>
+              Looks up a localized string similar to Cannot Get the Enum Clr member using &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.CannotInstantiateAbstractResourceType">
+            <summary>
+              Looks up a localized string similar to An instance of the abstract resource type &apos;{0}&apos; was found. Abstract resource types cannot be instantiated..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.CannotParseQueryRequestPayload">
+            <summary>
+              Looks up a localized string similar to Unable to parse query request payload..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.CannotPatchNavigationProperties">
+            <summary>
+              Looks up a localized string similar to Cannot apply PATCH to navigation property &apos;{0}&apos; on entity type &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.CannotProcessPrefixTemplate">
+            <summary>
+              Looks up a localized string similar to Cannot process the prefix &apos;{0}&apos; template..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.CannotSerializerNull">
+            <summary>
+              Looks up a localized string similar to Cannot serialize a null &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.CannotSetDynamicPropertyDictionary">
+            <summary>
+              Looks up a localized string similar to The dynamic dictionary property &apos;{0}&apos; of type &apos;{1}&apos; cannot be set. The dynamic property dictionary must have a setter..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.CannotWriteType">
+            <summary>
+              Looks up a localized string similar to {0} cannot write an object of type &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ClrTypeNotInModel">
+            <summary>
+              Looks up a localized string similar to The given model does not contain the type &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.CollectionParameterShouldHaveAddMethod">
+            <summary>
+              Looks up a localized string similar to The type &apos;{0}&apos; of the parameter &apos;{1}&apos; does not have an Add method. Consider using a collection type that does have an Add method - for example IList&lt;T&gt; or ICollection&lt;T&gt;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.CollectionShouldHaveAddMethod">
+            <summary>
+              Looks up a localized string similar to The type &apos;{0}&apos; of the property &apos;{1}&apos; on type &apos;{2}&apos; does not have an Add method. Consider using a collection type that does have an Add method - for example IList&lt;T&gt; or ICollection&lt;T&gt;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.CollectionShouldHaveClearMethod">
+            <summary>
+              Looks up a localized string similar to The type &apos;{0}&apos; of the property &apos;{1}&apos; on type &apos;{2}&apos; does not have a Clear method. Consider using a collection type that does have a Clear method, such as IList&lt;T&gt; or ICollection&lt;T&gt;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ConvertToEnumFailed">
+            <summary>
+              Looks up a localized string similar to Cannot compare an enum of type &apos;{0}&apos; to an expression of type &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.CreateODataValueNotSupported">
+            <summary>
+              Looks up a localized string similar to {0} does not support CreateODataValue..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.CustomQueryOptionNotSupportedWithDollarSign">
+            <summary>
+              Looks up a localized string similar to Custom query option &apos;{0}&apos; that starts with &apos;$&apos; is not supported..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.DeltaEntityTypeNotAssignable">
+            <summary>
+              Looks up a localized string similar to The actual entity type &apos;{0}&apos; is not assignable to the expected type &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.DeltaNestedResourceNameNotFound">
+            <summary>
+              Looks up a localized string similar to Cannot find nested resource name &apos;{0}&apos; in parent resource type &apos;{1}&apos;.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.DeltaTypeMismatch">
+            <summary>
+              Looks up a localized string similar to Cannot use Delta of type &apos;{0}&apos; on an entity of type &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.DeserializerDoesNotSupportRead">
+            <summary>
+              Looks up a localized string similar to &apos;{0}&apos; does not support Read..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.DoesNotSupportReadInLine">
+            <summary>
+              Looks up a localized string similar to Type &apos;{0}&apos; does not support ReadInline..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.DuplicateDynamicPropertyNameFound">
+            <summary>
+              Looks up a localized string similar to Duplicate dynamic property name &apos;{0}&apos; found in open type &apos;{1}&apos;. Each dynamic property name must be unique..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.DynamicPropertyCannotBeSerialized">
+            <summary>
+              Looks up a localized string similar to The dynamic property &apos;{0}&apos; with Edm type &apos;{1}&apos; cannot be serialized..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.DynamicPropertyNameAlreadyUsedAsDeclaredPropertyName">
+            <summary>
+              Looks up a localized string similar to The name of dynamic property &apos;{0}&apos; was already used as the declared property name of open type &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.DynamicResourceSetTypeNameIsRequired">
+            <summary>
+              Looks up a localized string similar to The type name of the dynamic resource set &apos;{0}&apos; is required and cannot be empty. Consider using a OData type annotation explicitly..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.EditLinkNullForLocationHeader">
+            <summary>
+              Looks up a localized string similar to The edit link builder for the entity set &apos;{0}&apos; returned null. An edit link is required for the location header..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.EdmComplexObjectNullRef">
+            <summary>
+              Looks up a localized string similar to Cannot get property &apos;{0}&apos; of a null EDM object of type &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.EdmObjectNull">
+            <summary>
+              Looks up a localized string similar to The property &apos;EdmObject&apos; of {0} cannot be null..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.EdmTypeCannotBeNull">
+            <summary>
+              Looks up a localized string similar to The EDM type of the object of type &apos;{0}&apos; is null. The EDM type of an &apos;{1}&apos; cannot be null..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.EdmTypeNotSupported">
+            <summary>
+              Looks up a localized string similar to {0} is not a supported EDM type..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ElementClrTypeNull">
+            <summary>
+              Looks up a localized string similar to The property &apos;ElementClrType&apos; of {0} cannot be null..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.EmptyKeyTemplate">
+            <summary>
+              Looks up a localized string similar to Key template value &apos;{0}&apos; for key segment &apos;{1}&apos; is empty..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.EmptyParameterAlias">
+            <summary>
+              Looks up a localized string similar to Parameter alias &apos;{0}&apos; in segment &apos;{1}&apos; is empty..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.EmptyPathTemplate">
+            <summary>
+              Looks up a localized string similar to The route template in path template &apos;{0}&apos; is empty..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.EntityReferenceMustHasKeySegment">
+            <summary>
+              Looks up a localized string similar to The Uri &apos;{0}&apos; in the parameter is invalid..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.EntitySetMissingDuringSerialization">
+            <summary>
+              Looks up a localized string similar to The related entity set could not be found from the OData path. The related entity set is required to serialize the payload..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.EntityTypeMismatch">
+            <summary>
+              Looks up a localized string similar to The entity type &apos;{0}&apos; does not match the expected entity type &apos;{1}&apos; as set on the query context..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ErrorTypeMustBeODataErrorOrHttpError">
+            <summary>
+              Looks up a localized string similar to The type &apos;{0}&apos; is not supported by the ODataErrorSerializer. The type must be ODataError or HttpError..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ETagNotWellFormed">
+            <summary>
+              Looks up a localized string similar to The ETag is not well-formed..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ExpandFilterExpressionNotLambdaExpression">
+            <summary>
+              Looks up a localized string similar to $filter in $expand of reference navigation property &apos;{0}&apos; is not expected type &apos;{1}&apos;.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ExpressionLexer_UnbalancedBracketExpression">
+            <summary>
+              Looks up a localized string similar to Found an unbalanced bracket &apos;{0}&apos; and &apos;{1}&apos; expression..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ExpressionLexerSyntaxError">
+            <summary>
+              Looks up a localized string similar to Syntax error at position {0} in &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ExpressionLexerUnterminatedStringLiteral">
+            <summary>
+              Looks up a localized string similar to There is an unterminated string literal at position {0} in &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.FailedToBuildEdmModelBecauseReturnTypeIsNull">
+            <summary>
+              Looks up a localized string similar to Cannot create an EDM model as the action &apos;{0}&apos; on controller &apos;{1}&apos; has a void return type..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.FailedToRetrieveTypeToBuildEdmModel">
+            <summary>
+              Looks up a localized string similar to Cannot create an EDM model as the action &apos;{0}&apos; on controller &apos;{1}&apos; has a return type &apos;{2}&apos; that does not implement IEnumerable&lt;T&gt;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.FormatterReadIsNotSupportedForType">
+            <summary>
+              Looks up a localized string similar to Reading type &apos;{0}&apos; is not supported by &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.FunctionNotBoundToCollectionOfEntity">
+            <summary>
+              Looks up a localized string similar to The function &apos;{0}&apos; is not bound to the collection of entity. Only functions that are bound to entities can have function links..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.FunctionNotBoundToEntity">
+            <summary>
+              Looks up a localized string similar to The function &apos;{0}&apos; is not bound to an entity. Only functions that are bound to entities can have function links..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.FunctionNotSupportedOnEnum">
+            <summary>
+              Looks up a localized string similar to The &apos;{0}&apos; function cannot be applied to an enumeration-typed argument..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.GetOnlyCollectionCannotBeArray">
+            <summary>
+              Looks up a localized string similar to The value of the property &apos;{0}&apos; on type &apos;{1}&apos; is an array. Consider adding a setter for the property..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.IdLinkNullForEntityIdHeader">
+            <summary>
+              Looks up a localized string similar to The Id link builder for the entity set &apos;{0}&apos; returned null. An Id link is required for the OData-EntityId header..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.InfiniteParameterAlias">
+            <summary>
+              Looks up a localized string similar to The parameter alias &apos;{0}&apos; is in an infinite loop..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.InputCastTypeKindNotMatch">
+            <summary>
+              Looks up a localized string similar to The input cast type &apos;{0}&apos; does not match the expected type kind &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.InputKeyNotMatchEntityTypeKey">
+            <summary>
+              Looks up a localized string similar to The input key count &apos;{0}&apos; does not match the number &apos;{1}&apos; of the key of entity type &apos;{2}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.InvalidAttributeRoutingTemplateSegment">
+            <summary>
+              Looks up a localized string similar to The attribute routing template contains invalid segment &apos;{0}&apos;. The template string does not start with &apos;{{&apos; or ends with &apos;}}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.InvalidBatchReaderState">
+            <summary>
+              Looks up a localized string similar to The current batch reader state &apos;{0}&apos; is invalid. The expected state is &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.InvalidExpansionDepthValue">
+            <summary>
+              Looks up a localized string similar to &apos;{0}&apos; should be less than or equal to &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.InvalidKeyInUriFound">
+            <summary>
+              Looks up a localized string similar to The key value ({0}) from request is not valid. The key value should be format of type &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.InvalidLastSegmentInSelectExpandPath">
+            <summary>
+              Looks up a localized string similar to The last segment &apos;{0}&apos; of the select or expand query option is not supported..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.InvalidODataRouteOnAction">
+            <summary>
+              Looks up a localized string similar to The path template &apos;{0}&apos; on the action &apos;{1}&apos; in controller &apos;{2}&apos; is not a valid OData path template. {3}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.InvalidODataUntypedValue">
+            <summary>
+              Looks up a localized string similar to The given untyped value &apos;{0}&apos; in payload is invalid. Consider using a OData type annotation explicitly..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.InvalidParameterValueInUriFound">
+            <summary>
+              Looks up a localized string similar to The parameter value ({0}) from request is not valid. The parameter value should be format of type &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.InvalidPropertyMapper">
+            <summary>
+              Looks up a localized string similar to The mapper provider must return a valid &apos;{0}&apos; instance for the given &apos;{1}&apos; IEdmType..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.InvalidPropertyMapping">
+            <summary>
+              Looks up a localized string similar to The key mapping for the property &apos;{0}&apos; can&apos;t be empty..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.InvalidSegmentInSelectExpandPath">
+            <summary>
+              Looks up a localized string similar to A segment &apos;{0}&apos; within the select or expand query option is not supported..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.InvalidTemplateLiteral">
+            <summary>
+              Looks up a localized string similar to The template string &apos;{0}&apos; of &apos;{1}&apos; is not a valid template literal. And a template literal should wrapper with &apos;{&apos; and &apos;}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.JsonConverterDoesnotSupportRead">
+            <summary>
+              Looks up a localized string similar to &apos;{0}&apos; is internal and should never be deserialized into..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.KeyTemplateMustBeInCurlyBraces">
+            <summary>
+              Looks up a localized string similar to Key template value &apos;{0}&apos; for key segment &apos;{1}&apos; does not start with &apos;{{&apos; or ends with &apos;}}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.KeyValueCannotBeNull">
+            <summary>
+              Looks up a localized string similar to Key property &apos;{0}&apos; of type &apos;{1}&apos; is null. Key properties cannot have null values..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.MappingDoesNotContainResourceType">
+            <summary>
+              Looks up a localized string similar to The provided mapping does not contain a resource for the resource type &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.MaxAnyAllExpressionLimitExceeded">
+            <summary>
+              Looks up a localized string similar to The Any/All nesting limit of &apos;{0}&apos; has been exceeded. &apos;{1}&apos; can be configured on ODataQuerySettings or EnableQueryAttribute..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.MaxExpandDepthExceeded">
+            <summary>
+              Looks up a localized string similar to The request includes a $expand path which is too deep. The maximum depth allowed is {0}. To increase the limit, set the &apos;{1}&apos; property on EnableQueryAttribute or ODataValidationSettings, or set the &apos;MaxDepth&apos; property in ExpandAttribute..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.MaxNodeLimitExceeded">
+            <summary>
+              Looks up a localized string similar to The node count limit of &apos;{0}&apos; has been exceeded. To increase the limit, set the &apos;{1}&apos; property on EnableQueryAttribute or ODataValidationSettings..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.MissingNonODataContainer">
+            <summary>
+              Looks up a localized string similar to Cannot find the services container for the non-OData route. This can occur when using OData components on the non-OData route and is usually a configuration issue. Call EnableDependencyInjection() to enable OData components on non-OData routes. This may also occur when a request was mistakenly handled by the ASP.NET Core routing layer instead of the OData routing layer, for instance the URL does not include the OData route prefix configured via a call to MapODataServiceRoute()..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.MissingODataContainer">
+            <summary>
+              Looks up a localized string similar to Cannot find the services container for route &apos;{0}&apos;. This should not happen and represents a bug..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.MissingODataServices">
+            <summary>
+              Looks up a localized string similar to Cannot find &apos;{0}&apos;. The OData services have not been configured. Are you missing a call to AddOData()?.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.MissingParameterAlias">
+            <summary>
+              Looks up a localized string similar to Missing the parameter alias &apos;{0}&apos; in the request query string..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.MissingRequiredParameterInOperation">
+            <summary>
+              Looks up a localized string similar to Missing the required parameter &apos;{0}&apos; is in the operation &apos;{1}&apos; parameter mapping..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ModelBinderUtil_ModelMetadataCannotBeNull">
+            <summary>
+              Looks up a localized string similar to The binding context cannot have a null ModelMetadata..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ModelBinderUtil_ValueCannotBeEnum">
+            <summary>
+              Looks up a localized string similar to The binding value &apos;{0}&apos; cannot be bound to the enum type &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ModelBindingContextMustHaveRequest">
+            <summary>
+              Looks up a localized string similar to The model binding context requires an attached request in order to model binding..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ModelMissingFromReadContext">
+            <summary>
+              Looks up a localized string similar to The EDM model is missing on the read context. The model is required on the read context to deserialize the payload..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ModelPrefixAlreadyUsed">
+            <summary>
+              Looks up a localized string similar to The prefix &apos;{0}&apos; was already used for other Edm model..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.MultipleActionImportFound">
+            <summary>
+              Looks up a localized string similar to Found multiple action imports with same &apos;{0}&apos; name within an entity container...
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.MultipleMatchingClrTypesForEdmType">
+            <summary>
+              Looks up a localized string similar to More than one matching CLR type found for the EDM type {0}.\nThe matching CLR types are {1}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.MultipleSingleLiteralNotAllowed">
+            <summary>
+              Looks up a localized string similar to &apos;{0}&apos; is not a valid expression.Single literal is only for single key. Multiple keys should use key=value..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.NavigationSourceMissingDuringDeserialization">
+            <summary>
+              Looks up a localized string similar to The related entity set or singleton cannot be found from the OData path. The related entity set or singleton is required to deserialize the payload..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.NavigationSourceMissingDuringSerialization">
+            <summary>
+              Looks up a localized string similar to The related entity set or singleton cannot be found from the OData path. The related entity set or singleton is required to serialize the payload..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.NestedCollectionsNotSupported">
+            <summary>
+              Looks up a localized string similar to The type &apos;{0}&apos; is a nested collection type. Nested collection types are not allowed..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.NestedPropertyNotfound">
+            <summary>
+              Looks up a localized string similar to Cannot find nested property &apos;{0}&apos; on the resource type &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.NonSelectExpandOnSingleEntity">
+            <summary>
+              Looks up a localized string similar to The requested resource is not a collection. Query options $filter, $orderby, $count, $skip, and $top can be applied only on collections..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.NotAllowedArithmeticOperator">
+            <summary>
+              Looks up a localized string similar to Arithmetic operator &apos;{0}&apos; is not allowed. To allow it, set the &apos;{1}&apos; property on EnableQueryAttribute or QueryValidationSettings..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.NotAllowedFunction">
+            <summary>
+              Looks up a localized string similar to Function &apos;{0}&apos; is not allowed. To allow it, set the &apos;{1}&apos; property on EnableQueryAttribute or QueryValidationSettings..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.NotAllowedLogicalOperator">
+            <summary>
+              Looks up a localized string similar to Logical operator &apos;{0}&apos; is not allowed. To allow it, set the &apos;{1}&apos; property on EnableQueryAttribute or QueryValidationSettings..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.NotAllowedOrderByProperty">
+            <summary>
+              Looks up a localized string similar to Order by &apos;{0}&apos; is not allowed. To allow it, set the &apos;{1}&apos; property on EnableQueryAttribute or QueryValidationSettings..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.NotAllowedQueryOption">
+            <summary>
+              Looks up a localized string similar to Query option &apos;{0}&apos; is not allowed. To allow it, set the &apos;{1}&apos; property on EnableQueryAttribute or QueryValidationSettings..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.NotCountableEntitySetUsedForCount">
+            <summary>
+              Looks up a localized string similar to The entity set &apos;{0}&apos; cannot be used for $count..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.NotCountablePropertyUsedForCount">
+            <summary>
+              Looks up a localized string similar to The property &apos;{0}&apos; cannot be used for $count..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.NotExpandablePropertyUsedInExpand">
+            <summary>
+              Looks up a localized string similar to The property &apos;{0}&apos; cannot be used in the $expand query option..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.NotFilterablePropertyUsedInFilter">
+            <summary>
+              Looks up a localized string similar to The property &apos;{0}&apos; cannot be used in the $filter query option..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.NotNavigablePropertyUsedInNavigation">
+            <summary>
+              Looks up a localized string similar to The property &apos;{0}&apos; cannot be used for navigation..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.NotSelectablePropertyUsedInSelect">
+            <summary>
+              Looks up a localized string similar to The property &apos;{0}&apos; cannot be used in the $select query option..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.NotSortablePropertyUsedInOrderBy">
+            <summary>
+              Looks up a localized string similar to The property &apos;{0}&apos; cannot be used in the $orderby query option..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.NotSupportedTransformationKind">
+            <summary>
+              Looks up a localized string similar to Transformation kind {0} is not supported..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.NullContainer">
+            <summary>
+              Looks up a localized string similar to The container built by the container builder must not be null..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.NullContainerBuilder">
+            <summary>
+              Looks up a localized string similar to The container builder created by the container builder factory must not be null..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.NullElementInCollection">
+            <summary>
+              Looks up a localized string similar to Collections cannot contain null elements..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ODataFunctionNotSupported">
+            <summary>
+              Looks up a localized string similar to Unknown function &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ODataPathMissing">
+            <summary>
+              Looks up a localized string similar to The operation cannot be completed because no ODataPath is available for the request..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.OnlySingleValueNodeSupported">
+            <summary>
+              Looks up a localized string similar to Only SingleValueNode supported..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.OperationIsNotBound">
+            <summary>
+              Looks up a localized string similar to The input operation &apos;{0}&apos; is not a bound &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.OperationMustBeUniqueInEntitySetContainer">
+            <summary>
+              Looks up a localized string similar to Action import and function import &apos;{0}&apos; MUST be unique within an entity container..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.OrderByClauseInvalid">
+            <summary>
+              Looks up a localized string similar to OrderBy clause kind &apos;{0}&apos; is not valid. Only kind &apos;{1}&apos; is accepted..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.OrderByClauseNotSupported">
+            <summary>
+              Looks up a localized string similar to Only ordering by properties is supported for non-primitive collections. Expressions are not supported..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.OrderByDuplicateIt">
+            <summary>
+              Looks up a localized string similar to Multiple &apos;$it&apos; nodes are not supported in &apos;$orderby&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.OrderByDuplicateProperty">
+            <summary>
+              Looks up a localized string similar to Duplicate property named &apos;{0}&apos; is not supported in &apos;$orderby&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.OrderByNodeCountExceeded">
+            <summary>
+              Looks up a localized string similar to The number of clauses in $orderby query option exceeded the maximum number allowed. The maximum number of $orderby clauses allowed is {0}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ParameterTemplateMustBeInCurlyBraces">
+            <summary>
+              Looks up a localized string similar to Parameter template &apos;{0}&apos; in segment &apos;{1}&apos; does not start with &apos;{{&apos; or ends with &apos;}}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ParameterTypeIsNotCollection">
+            <summary>
+              Looks up a localized string similar to The type &apos;{0}&apos; of the parameter &apos;{1}&apos; must be a collection..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.PropertyCannotBeConverted">
+            <summary>
+              Looks up a localized string similar to The value cannot be converted to type {0}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.PropertyIsNotCollection">
+            <summary>
+              Looks up a localized string similar to The type &apos;{0}&apos; of the property &apos;{1}&apos; on type &apos;{2}&apos; must be a collection..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.PropertyMustBeBoolean">
+            <summary>
+              Looks up a localized string similar to The value must be a boolean..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.PropertyMustBeDateTimeOffsetOrDate">
+            <summary>
+              Looks up a localized string similar to The value must be a DateTimeOffset or Date..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.PropertyMustBeEnum">
+            <summary>
+              Looks up a localized string similar to The value with type &apos;{0}&apos; must have type &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.PropertyMustBeString">
+            <summary>
+              Looks up a localized string similar to The value must be a string..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.PropertyMustBeStringLengthOne">
+            <summary>
+              Looks up a localized string similar to The value must be a string with a length of 1..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.PropertyMustBeStringMaxLengthOne">
+            <summary>
+              Looks up a localized string similar to The value must be a string with a maximum length of 1..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.PropertyMustBeTimeOfDay">
+            <summary>
+              Looks up a localized string similar to The value must be a Edm.TimeOfDay..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.PropertyMustHavePublicGetterAndSetter">
+            <summary>
+              Looks up a localized string similar to The PropertyInfo provided must have public &apos;get&apos; and &apos;set&apos; accessor methods..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.PropertyNotFound">
+            <summary>
+              Looks up a localized string similar to The EDM instance of type &apos;{0}&apos; is missing the property &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.PropertyNotFoundOnPathExpression">
+            <summary>
+              Looks up a localized string similar to Can not resolve the property using property path &apos;{0}&apos; from type &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.PropertyOrPathWasRemovedFromContext">
+            <summary>
+              Looks up a localized string similar to Property or path {0} is not available in the current context. It was removed in earlier transformation..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.PropertyTypeOverflow">
+            <summary>
+              Looks up a localized string similar to The value has a value that is out of range of type {0}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.PropertyUnrecognizedFormat">
+            <summary>
+              Looks up a localized string similar to The value has a format that is not recognized by type {0}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.QueryCannotBeEmpty">
+            <summary>
+              Looks up a localized string similar to The value for OData query &apos;{0}&apos; cannot be empty..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.QueryGetModelMustNotReturnNull">
+            <summary>
+              Looks up a localized string similar to A model is required for querying. Consider implementing the EnableQueryAttribute.GetModel method never to return a null value..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.QueryNodeBindingNotSupported">
+            <summary>
+              Looks up a localized string similar to Binding OData QueryNode of kind &apos;{0}&apos; is not supported by &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.QueryNodeValidationNotSupported">
+            <summary>
+              Looks up a localized string similar to Validating OData QueryNode of kind {0} is not supported by {1}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.QueryParameterNotSupported">
+            <summary>
+              Looks up a localized string similar to The query parameter &apos;{0}&apos; is not supported..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ReadFromStreamAsyncMustHaveRequest">
+            <summary>
+              Looks up a localized string similar to The OData formatter requires an attached request in order to deserialize..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ReferenceNavigationPropertyExpandFilterVisitorUnexpectedParameter">
+            <summary>
+              Looks up a localized string similar to Found unexpected parameter &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.RequestMustHaveModel">
+            <summary>
+              Looks up a localized string similar to The request must have an associated EDM model. Consider registering Edm model calling AddOData()..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.RequestNotActionInvocation">
+            <summary>
+              Looks up a localized string similar to The last segment of the request URI &apos;{0}&apos; was not recognized as an OData action..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.RequiredParametersNotSubsetOfFunctionParameters">
+            <summary>
+              Looks up a localized string similar to The input parameters &apos;{0}&apos; is not subset of function parameters &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ResourceTypeNotInModel">
+            <summary>
+              Looks up a localized string similar to Cannot find the resource type &apos;{0}&apos; in the model..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.RootElementNameMissing">
+            <summary>
+              Looks up a localized string similar to The &apos;RootElementName&apos; property is required on &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.RouteOptionDisabledKeySegment">
+            <summary>
+              Looks up a localized string similar to The route option disables key in parenthesis and key as segment. At least one option should enable..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.RouteOptionDisabledOperationSegment">
+            <summary>
+              Looks up a localized string similar to The route option disables qualified and unqualified operation call. At least one option should enable..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.RouteServicesAlreadyExist">
+            <summary>
+              Looks up a localized string similar to A dependency injection container for this request already exists..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.SegmentShouldBeKind">
+            <summary>
+              Looks up a localized string similar to The input segment should be &apos;{0}&apos; in &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.SelectExpandEmptyOrNull">
+            <summary>
+              Looks up a localized string similar to &apos;select&apos; and &apos;expand&apos; cannot be both null or empty..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.SelectExpandEmptyOrWhitespace">
+            <summary>
+              Looks up a localized string similar to &apos;select&apos; and &apos;expand&apos; cannot be empty or whitespace. Omit the parameter from the query if it is not used..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.SelectionTypeNotSupported">
+            <summary>
+              Looks up a localized string similar to $select does not support selections of type &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.SelectNonStructured">
+            <summary>
+              Looks up a localized string similar to The type &apos;{0}&apos; is not a structured type. Only structured types support $select and $expand..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ShouldHaveNavigationPropertyInNavigationExpandPath">
+            <summary>
+              Looks up a localized string similar to A navigation property expand path should have navigation property in the path..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.SingleResultHasMoreThanOneEntity">
+            <summary>
+              Looks up a localized string similar to The action &apos;{0}&apos; on controller &apos;{1}&apos; returned a {2} containing more than one element. {2} must have zero or one elements..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.SkipTokenParseError">
+            <summary>
+              Looks up a localized string similar to Unable to parse the skiptoken value &apos;{0}&apos;. Skiptoken value should always be server generated..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.SkipTokenProcessingError">
+            <summary>
+              Looks up a localized string similar to Unable to get property values from the skiptoken value..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.SkipTopLimitExceeded">
+            <summary>
+              Looks up a localized string similar to The limit of &apos;{0}&apos; for {1} query has been exceeded. The value from the incoming request is &apos;{2}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.TargetKindNotImplemented">
+            <summary>
+              Looks up a localized string similar to &apos;{0}&apos; of kind &apos;{1}&apos; is not implemented..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.TypeCannotBeDeserialized">
+            <summary>
+              Looks up a localized string similar to &apos;{0}&apos; cannot be deserialized using the OData input formatter..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.TypeCannotBeSerialized">
+            <summary>
+              Looks up a localized string similar to &apos;{0}&apos; cannot be serialized using the OData output formatter..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.TypeMustBeEntity">
+            <summary>
+              Looks up a localized string similar to {0} is not an entity type. Only entity types are supported..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.TypeMustBeEnumOrNullableEnum">
+            <summary>
+              Looks up a localized string similar to The type &apos;{0}&apos; must be an enum or Nullable&lt;T&gt; where T is an enum type..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.TypeMustBeRelated">
+            <summary>
+              Looks up a localized string similar to The type &apos;{0}&apos; does not inherit from and is not a base type of &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.TypeMustBeResourceSet">
+            <summary>
+              Looks up a localized string similar to &apos;{0}&apos; is not a resource set type. Only resource set are supported..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.TypeOfDynamicPropertyNotSupported">
+            <summary>
+              Looks up a localized string similar to The type &apos;{0}&apos; of dynamic property &apos;{1}&apos; is not supported..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.UnableToDetermineBaseUrl">
+            <summary>
+              Looks up a localized string similar to The OData formatter was unable to determine the base URI for the request. The request must be processed by an OData route for the OData formatter to serialize the response..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.UnableToDetermineMetadataUrl">
+            <summary>
+              Looks up a localized string similar to The OData formatter must be able to determine the metadata URL for a request in order to serialize the response..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.UnableToIdentifyUniqueProperty">
+            <summary>
+              Looks up a localized string similar to Unable to identify a unique property named &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.UnaryNodeValidationNotSupported">
+            <summary>
+              Looks up a localized string similar to Validating OData UnaryOperatorNode of kind {0} is not supported by {1}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.UnexpectedElementType">
+            <summary>
+              Looks up a localized string similar to The element type &apos;{0}&apos; of the given collection type &apos;{1}&apos; is not of the type &apos;{2}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.UnsupportedEdmType">
+            <summary>
+              Looks up a localized string similar to The EDM type &apos;{0}&apos; of kind &apos;{1}&apos; is not supported..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.UnsupportedEdmTypeKind">
+            <summary>
+              Looks up a localized string similar to Found unsupported EdmTypeKind &apos;{0}&apos; in list of available types..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.UriFunctionClrBinderAlreadyBound">
+            <summary>
+              Looks up a localized string similar to The function &apos;{0}&apos; is already bound to another method..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.UriQueryStringInvalid">
+            <summary>
+              Looks up a localized string similar to The query specified in the URI is not valid. {0}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.ValueIsInvalid">
+            <summary>
+              Looks up a localized string similar to The value &apos;{0}&apos; is invalid. {1}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.WriteObjectInlineNotSupported">
+            <summary>
+              Looks up a localized string similar to {0} does not support WriteObjectInline..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.WriteObjectNotSupported">
+            <summary>
+              Looks up a localized string similar to {0} does not support WriteObject..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.OData.SRResources.WriteToResponseAsyncMustHaveRequest">
+            <summary>
+              Looks up a localized string similar to The OData formatter requires an attached request in order to serialize..
             </summary>
         </member>
         <member name="T:Microsoft.AspNetCore.OData.Results.BadRequestODataResult">

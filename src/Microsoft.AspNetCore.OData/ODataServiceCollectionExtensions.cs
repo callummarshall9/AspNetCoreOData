@@ -5,7 +5,9 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
+using System;
 using System.Linq;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -17,6 +19,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
+using Microsoft.OData.Edm;
 using Microsoft.OData.ModelBuilder;
 
 namespace Microsoft.AspNetCore.OData
@@ -37,6 +40,25 @@ namespace Microsoft.AspNetCore.OData
         public static IServiceCollection AddODataQueryFilter(this IServiceCollection services)
         {
             return AddODataQueryFilter(services, new EnableQueryAttribute());
+        }
+
+        public static void AddOData(this IServiceCollection services, Action<ODataOptions> setupAction)
+        {
+            services.AddODataCore();
+
+            services.Configure(setupAction);
+        }
+
+        public static void AddODataOptions<T>(this IServiceCollection services, IEdmModel model) where T : class
+        {
+            services.AddTransient((IServiceProvider provider) =>
+            {
+                var httpContextAccessor = provider.GetService(typeof(IHttpContextAccessor)) as IHttpContextAccessor;
+
+                var options = new ODataServiceCollectionQueryOptionsExtensions();
+
+                return options.CreateAndValidateQueryOptions<T>(httpContextAccessor.HttpContext.Request, new ODataQueryContext(model, typeof(T)));
+            });
         }
 
         /// <summary>
